@@ -24,27 +24,38 @@ SOFTWARE.
 
 package se.lth.cs.etsa02.basicmeleebot;
 
+import java.awt.Color;
+import java.util.ArrayList;
+
 import robocode.AdvancedRobot;
+import robocode.Robot;
 import robocode.RobotDeathEvent;
 import robocode.ScannedRobotEvent;
+import robocode.TeamRobot;
 
 /**
  * @author David Phung
  * 
  * Skeleton robot prepared for ETSA02 labs. Prepared to evolve into project.
  */
-public class BasicMeleeBot extends AdvancedRobot {
+public class BasicMeleeBot extends TeamRobot {
 
 	private EnemyTracker enemyTracker;
 	private PositioningSystem positioningSystem;
 	private MovementSystem movementSystem;
 	private TargetingSystem targetingSystem;
+	private ArrayList<String> alliesNames;
+	
 	
 	/**
 	 * The main loop controlling the robot behavior.
 	 */
 	@Override
 	public void run() {
+		alliesNames = new ArrayList<String>();
+		for (String r : getTeammates()) {
+			alliesNames.add(r);
+		}
 		enemyTracker = new EnemyTracker(this);
 		positioningSystem = new PositioningSystem(getBattleFieldWidth(), getBattleFieldHeight());
 		movementSystem = new MovementSystem(this, enemyTracker, positioningSystem);
@@ -72,7 +83,9 @@ public class BasicMeleeBot extends AdvancedRobot {
 	 */
 	@Override
 	public void onScannedRobot(ScannedRobotEvent event) {
-		enemyTracker.addEnemy(event);
+		if (!alliesNames.contains(event.getName())) {
+			enemyTracker.addEnemy(event);
+		}
 	}
 	
 	/**
